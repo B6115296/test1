@@ -6,22 +6,42 @@ import (
 	"context"
 	"sync"
 
-	"github.com/facebook/ent/dialect"
+	"github.com/facebookincubator/ent/dialect"
 )
 
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// Playlist is the client for interacting with the Playlist builders.
-	Playlist *PlaylistClient
-	// Playlist_Video is the client for interacting with the Playlist_Video builders.
-	Playlist_Video *Playlist_VideoClient
-	// Resolution is the client for interacting with the Resolution builders.
-	Resolution *ResolutionClient
-	// User is the client for interacting with the User builders.
-	User *UserClient
-	// Video is the client for interacting with the Video builders.
-	Video *VideoClient
+	// Amountpaid is the client for interacting with the Amountpaid builders.
+	Amountpaid *AmountpaidClient
+	// Bank is the client for interacting with the Bank builders.
+	Bank *BankClient
+	// Category is the client for interacting with the Category builders.
+	Category *CategoryClient
+	// Gender is the client for interacting with the Gender builders.
+	Gender *GenderClient
+	// GroupOfAge is the client for interacting with the GroupOfAge builders.
+	GroupOfAge *GroupOfAgeClient
+	// Hospital is the client for interacting with the Hospital builders.
+	Hospital *HospitalClient
+	// Inquiry is the client for interacting with the Inquiry builders.
+	Inquiry *InquiryClient
+	// Insurance is the client for interacting with the Insurance builders.
+	Insurance *InsuranceClient
+	// Member is the client for interacting with the Member builders.
+	Member *MemberClient
+	// MoneyTransfer is the client for interacting with the MoneyTransfer builders.
+	MoneyTransfer *MoneyTransferClient
+	// Officer is the client for interacting with the Officer builders.
+	Officer *OfficerClient
+	// Payback is the client for interacting with the Payback builders.
+	Payback *PaybackClient
+	// Payment is the client for interacting with the Payment builders.
+	Payment *PaymentClient
+	// Product is the client for interacting with the Product builders.
+	Product *ProductClient
+	// Recordinsurance is the client for interacting with the Recordinsurance builders.
+	Recordinsurance *RecordinsuranceClient
 
 	// lazily loaded.
 	client     *Client
@@ -157,11 +177,21 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.Playlist = NewPlaylistClient(tx.config)
-	tx.Playlist_Video = NewPlaylist_VideoClient(tx.config)
-	tx.Resolution = NewResolutionClient(tx.config)
-	tx.User = NewUserClient(tx.config)
-	tx.Video = NewVideoClient(tx.config)
+	tx.Amountpaid = NewAmountpaidClient(tx.config)
+	tx.Bank = NewBankClient(tx.config)
+	tx.Category = NewCategoryClient(tx.config)
+	tx.Gender = NewGenderClient(tx.config)
+	tx.GroupOfAge = NewGroupOfAgeClient(tx.config)
+	tx.Hospital = NewHospitalClient(tx.config)
+	tx.Inquiry = NewInquiryClient(tx.config)
+	tx.Insurance = NewInsuranceClient(tx.config)
+	tx.Member = NewMemberClient(tx.config)
+	tx.MoneyTransfer = NewMoneyTransferClient(tx.config)
+	tx.Officer = NewOfficerClient(tx.config)
+	tx.Payback = NewPaybackClient(tx.config)
+	tx.Payment = NewPaymentClient(tx.config)
+	tx.Product = NewProductClient(tx.config)
+	tx.Recordinsurance = NewRecordinsuranceClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -171,7 +201,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Playlist.QueryXXX(), the query will be executed
+// applies a query, for example: Amountpaid.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

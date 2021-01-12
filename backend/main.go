@@ -2,45 +2,111 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/sut63/team05/controllers"
+	_ "github.com/sut63/team05/docs"
+	"github.com/sut63/team05/ent"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/tanapon395/playlist-video/controllers"
-	"github.com/tanapon395/playlist-video/ent"
-	"github.com/tanapon395/playlist-video/ent/user"
 )
 
-type Users struct {
-	User []User
+// Hospital struct input data
+type Hospitals struct {
+	Hospital []Hospital
 }
 
-type User struct {
-	Name  string
-	Email string
+// Hospital struct
+type Hospital struct {
+	HospitalName string
 }
 
-type Playlists struct {
-	Playlist []Playlist
+// Member struct input data
+type Members struct {
+	Member []Member
 }
 
-type Playlist struct {
-	Title string
-	Owner int
+// Member struct
+type Member struct {
+	MemberEmail    string
+	MemberName     string
+	MemberPassword string
 }
 
-type Videos struct {
-	Video []Video
+// Genders struct input data
+type Genders struct {
+	Gender []Gender
 }
 
-type Video struct {
-	Name  string
-	Url   string
-	Owner int
+// Gender struct
+type Gender struct {
+	GenderName string
+}
+
+// GroupOfAges struct input data
+type GroupOfAges struct {
+	GroupOfAge []GroupOfAge
+}
+
+// GroupOfAge struct
+type GroupOfAge struct {
+	GroupOfAgeName string
+	GroupOfAgeAge  string
+}
+
+// Officers struct input data
+type Officers struct {
+	Officer []Officer
+}
+
+// Officer struct
+type Officer struct {
+	OfficerEmail    string
+	OfficerName     string
+	OfficerPassword string
+}
+
+// MoneyTransfers struct input data
+type MoneyTransfers struct {
+	MoneyTransfer []MoneyTransfer
+}
+
+// MoneyTransfer struct
+type MoneyTransfer struct {
+	MoneytransferType string
+}
+
+// Banks struct input data
+type Banks struct {
+	Bank []Bank
+}
+
+// Bank struct
+type Bank struct {
+	BankType string
+}
+
+// Amountpaids struct input data
+type Amountpaids struct {
+	Amountpaid []Amountpaid
+}
+
+// Amountpaid struct
+type Amountpaid struct {
+	AmountpaidMoney float64
+}
+
+// Category struct input data
+type Categorys struct {
+	Category []Category
+}
+
+// Gender struct
+type Category struct {
+	CategoryName string
 }
 
 // @title SUT SA Example API Playlist Vidoe
@@ -88,7 +154,7 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 
-	client, err := ent.Open("sqlite3", "file:ent.db?cache=shared&_fk=1")
+	client, err := ent.Open("sqlite3", "file:Health.db?cache=shared&_fk=1")
 	if err != nil {
 		log.Fatalf("fail to open sqlite3: %v", err)
 	}
@@ -99,90 +165,172 @@ func main() {
 	}
 
 	v1 := router.Group("/api/v1")
-	controllers.NewUserController(v1, client)
-	controllers.NewVideoController(v1, client)
-	controllers.NewResolutionController(v1, client)
-	controllers.NewPlaylistController(v1, client)
-	controllers.NewPlaylistVideoController(v1, client)
+	controllers.NewMemberController(v1, client)
+	controllers.NewInsuranceController(v1, client)
+	controllers.NewHospitalController(v1, client)
+	controllers.NewGenderController(v1, client)
+	controllers.NewGroupOfAgeController(v1, client)
+	controllers.NewOfficerController(v1, client)
+	controllers.NewProductController(v1, client)
+	controllers.NewMoneyTransferController(v1, client)
+	controllers.NewAmountpaidController(v1, client)
+	controllers.NewcategoryController(v1, client)
 
-	// Set Users Data
-	users := Users{
-		User: []User{
-			User{"Chanwit Kaewkasi", "chanwit@gmail.com"},
-			User{"Name Surname", "me@example.com"},
+	// Set Members Data
+	members := Members{
+		Member: []Member{
+			Member{"b6115296@g.sut.ac.th", "Teerapat Saiprom", "1234"},
+			Member{"b6132552@g.sut.ac.th", "Teerasuk Supawaha", "1234"},
 		},
 	}
 
-	for _, u := range users.User {
-		client.User.
+	for _, m := range members.Member {
+		client.Member.
 			Create().
-			SetEmail(u.Email).
-			SetName(u.Name).
+			SetMemberEmail(m.MemberEmail).
+			SetMemberName(m.MemberName).
+			SetMemberPassword(m.MemberPassword).
 			Save(context.Background())
 	}
 
-	// Set Resolutions Data
-	resolutions := []int{240, 360, 480, 720, 1080}
-	for _, r := range resolutions {
-		client.Resolution.
-			Create().
-			SetValue(r).
-			Save(context.Background())
-	}
-
-	// Set Playlist Data
-	playlists := Playlists{
-		Playlist: []Playlist{
-			Playlist{"Watched", 1},
-			Playlist{"Watch Later", 1},
-			Playlist{"Watch Later", 2},
+	// Set Hospitals Data
+	hospitals := Hospitals{
+		Hospital: []Hospital{
+			Hospital{"Suranaree"},
+			Hospital{"Maharat (Nakhon ratchasima)"},
 		},
 	}
 
-	for _, p := range playlists.Playlist {
-
-		u, err := client.User.
-			Query().
-			Where(user.IDEQ(int(p.Owner))).
-			Only(context.Background())
-
-		if err != nil {
-			fmt.Println(err.Error())
-			return
-		}
-
-		client.Playlist.
+	for _, h := range hospitals.Hospital {
+		client.Hospital.
 			Create().
-			SetTitle(p.Title).
-			SetOwner(u).
+			SetHospitalName(h.HospitalName).
 			Save(context.Background())
 	}
 
-	// Set Videos Data
-	videos := Videos{
-		Video: []Video{
-			Video{"SA Lecture 4", "http://google.con", 1},
-			Video{"React and TypeScript - Getting Started", "https://www.youtube.com/watch?v=I9jfsIRnySs&ab_channel=JamesQQuick", 2},
+	// Set Offices Data
+	officers := Officers{
+		Officer: []Officer{
+			Officer{"gamse0505@gmail.com", "Somchai Ngaosri", "Aa123"},
+			Officer{"Panyaporn@gmail.com", "Panyaporn Ngaosri", "Bb123"},
 		},
 	}
 
-	for _, v := range videos.Video {
-
-		u, err := client.User.
-			Query().
-			Where(user.IDEQ(int(v.Owner))).
-			Only(context.Background())
-
-		if err != nil {
-			fmt.Println(err.Error())
-			return
-		}
-
-		client.Video.
+	for _, ofc := range officers.Officer {
+		client.Officer.
 			Create().
-			SetName(v.Name).
-			SetURL(v.Url).
-			SetOwner(u).
+			SetOfficerEmail(ofc.OfficerEmail).
+			SetOfficerName(ofc.OfficerName).
+			SetOfficerPassword(ofc.OfficerPassword).
+			Save(context.Background())
+	}
+
+	// Set GroupOfAges Data
+	groupofages := GroupOfAges{
+		GroupOfAge: []GroupOfAge{
+			GroupOfAge{"เด็ก", "10 - 15 ปี"},
+			GroupOfAge{"วัยรุ่น", "16 - 29 ปี"},
+			GroupOfAge{"ผู้ใหญ่", "30 - 59 ปี"},
+			GroupOfAge{"ผู้สูงอายุ", "60 ปีขึ้นไป"},
+		},
+	}
+
+	for _, goa := range groupofages.GroupOfAge {
+
+		client.GroupOfAge.
+			Create().
+			SetGroupOfAgeName(goa.GroupOfAgeName).
+			SetGroupOfAgeAge(goa.GroupOfAgeAge).
+			Save(context.Background())
+	}
+
+	// Set Genders Data
+	genders := Genders{
+		Gender: []Gender{
+			Gender{"ชาย"},
+			Gender{"หญิง"},
+		},
+	}
+
+	for _, gd := range genders.Gender {
+
+		client.Gender.
+			Create().
+			SetGenderName(gd.GenderName).
+			Save(context.Background())
+	}
+
+	// Set MoneyTransfers Data
+	moneytransfers := MoneyTransfers{
+		MoneyTransfer: []MoneyTransfer{
+			MoneyTransfer{"Internet banking"},
+			MoneyTransfer{"Moblie banking"},
+			MoneyTransfer{"ATM"},
+		},
+	}
+
+	for _, mn := range moneytransfers.MoneyTransfer {
+
+		client.MoneyTransfer.
+			Create().
+			SetMoneytransferType(mn.MoneytransferType).
+			Save(context.Background())
+	}
+
+	// Set Banks Data
+	banks := Banks{
+		Bank: []Bank{
+			Bank{"ธนาคารกสิกรไทย"},
+			Bank{"ธนาคารกรุงเทพ"},
+			Bank{"ธนาคารกรุงศรีอยุธยา"},
+			Bank{"ธนาคารไทยพาณิชย์"},
+			Bank{"ธนาคารกรุงไทย"},
+			Bank{"ธนาคารทหารไทย"},
+			Bank{"ธนาคารธนาชาต"},
+			Bank{"ธนาคารออมสิน"},
+		},
+	}
+
+	for _, b := range banks.Bank {
+
+		client.Bank.
+			Create().
+			SetBankType(b.BankType).
+			Save(context.Background())
+	}
+
+	// Set Amountpaid Data
+	amountpaids := Amountpaids{
+		Amountpaid: []Amountpaid{
+			Amountpaid{25000.50},
+			Amountpaid{57000.75},
+			Amountpaid{82500.00},
+			Amountpaid{90000.25},
+			Amountpaid{110000.00},
+		},
+	}
+
+	for _, ap := range amountpaids.Amountpaid {
+
+		client.Amountpaid.
+			Create().
+			SetAmountpaidMoney(ap.AmountpaidMoney).
+			Save(context.Background())
+	}
+
+	// Set Categorys Data
+	categorys := Categorys{
+		Category: []Category{
+			Category{"สนใจผลิตภัณฑ์ประกันสุขภาพ"},
+			Category{"สอบถามข้อมูลผลตอบแทน"},
+			Category{"สอบถามการชำระเบี้ยประกัน"},
+		},
+	}
+
+	for _, cg := range categorys.Category {
+		client.Category.
+			Create().
+			SetCategoryName(cg.CategoryName).
 			Save(context.Background())
 	}
 

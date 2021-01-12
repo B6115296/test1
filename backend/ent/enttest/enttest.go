@@ -5,11 +5,11 @@ package enttest
 import (
 	"context"
 
-	"github.com/tanapon395/playlist-video/ent"
+	"github.com/sut63/team05/ent"
 	// required by schema hooks.
-	_ "github.com/tanapon395/playlist-video/ent/runtime"
+	_ "github.com/sut63/team05/ent/runtime"
 
-	"github.com/facebook/ent/dialect/sql/schema"
+	"github.com/facebookincubator/ent/dialect/sql/schema"
 )
 
 type (
